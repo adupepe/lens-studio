@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lens Studio — Portfolio fotograficzne</title>
+<meta name="description" content="Lens Studio — portfolio fotografa: reportaże, portrety i fotografia produktowa." />
+<style>
+  :root {
+    --bg: #0e0e10;
+    --panel: #161619;
+    --border: #26262b;
+    --text: #f2f2f4;
+    --muted: #9a9aa3;
+    --accent: #e8b04b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  header {
+    position: fixed; inset: 0 0 auto 0; z-index: 40;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 36px; mix-blend-mode: normal;
+    background: linear-gradient(rgba(14,14,16,.85), transparent);
+  }
+  .logo { font-weight: 700; font-size: 18px; letter-spacing: .04em; }
+  .logo span { color: var(--accent); }
+  nav a { color: var(--muted); text-decoration: none; margin-left: 26px; font-size: 14px; transition: .15s; }
+  nav a:hover { color: var(--text); }
+  .hero { min-height: 92vh; display: grid; place-items: center; text-align: center; padding: 100px 24px 60px; position: relative; }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(500px 300px at 50% 80%, rgba(232,176,75,.10), transparent 70%);
+    pointer-events: none;
+  }
+  .hero .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: .3em; text-transform: uppercase; }
+  .hero h1 { font-size: clamp(44px, 8vw, 84px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin: 18px 0; }
+  .hero p { color: var(--muted); max-width: 480px; margin: 0 auto 34px; font-size: 17px; }
+  .filters { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; padding: 20px 24px 34px; }
+  .filters button {
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    padding: 8px 18px; border-radius: 999px; font-size: 13px; cursor: pointer; transition: .15s;
+  }
+  .filters button:hover { color: var(--text); border-color: var(--accent); }
+  .filters button.on { background: var(--accent); border-color: var(--accent); color: #141414; font-weight: 600; }
+  .grid {
+    max-width: 1100px; margin: 0 auto; padding: 0 24px 80px;
+    columns: 3; column-gap: 14px;
+  }
+  .shot {
+    break-inside: avoid; margin-bottom: 14px; border-radius: 14px; overflow: hidden;
+    position: relative; cursor: pointer; border: 1px solid var(--border);
+    background: linear-gradient(160deg, var(--c1), var(--c2));
+    display: grid; place-items: center; font-size: 44px;
+  }
+  .shot::after {
+    content: attr(data-cat); position: absolute; left: 12px; bottom: 12px;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+    font-size: 11px; padding: 4px 10px; border-radius: 999px; color: #fff;
+    opacity: 0; transition: .2s;
+  }
+  .shot:hover::after { opacity: 1; }
+  .shot:hover { filter: brightness(1.08); }
+  .a { aspect-ratio: 3/4; } .b { aspect-ratio: 1; } .c { aspect-ratio: 4/3; }
+  .lightbox {
+    position: fixed; inset: 0; z-index: 100; display: none; place-items: center;
+    background: rgba(0,0,0,.9); backdrop-filter: blur(8px); padding: 24px;
+  }
+  .lightbox.open { display: grid; }
+  .lightbox .frame {
+    width: min(720px, 90vw); aspect-ratio: 4/3; border-radius: 18px;
+    display: grid; place-items: center; font-size: 90px;
+    background: linear-gradient(160deg, var(--c1), var(--c2));
+  }
+  .lightbox .cap { text-align: center; color: var(--muted); margin-top: 16px; font-size: 14px; }
+  .lightbox .close {
+    position: absolute; top: 24px; right: 28px; font-size: 30px; color: #fff;
+    background: none; border: none; cursor: pointer; opacity: .7;
+  }
+  .lightbox .close:hover { opacity: 1; }
+  .offer { max-width: 1100px; margin: 0 auto; padding: 60px 24px 100px; }
+  .offer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 34px; }
+  .offer .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 26px; transition: .2s; }
+  .offer .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .card h3 { font-size: 16px; margin-bottom: 8px; }
+  .card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+  .card .price { color: var(--accent); font-weight: 700; margin-top: 14px; font-size: 15px; }
+  footer { border-top: 1px solid var(--border); color: var(--muted); text-align: center; font-size: 13px; padding: 36px 24px; }
+  @media (max-width: 800px) { .grid { columns: 2; } .offer-grid { grid-template-columns: 1fr; } nav { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">LENS<span> STUDIO</span></div>
+  <nav>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#oferta">Oferta</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div>
+    <p class="eyebrow">Fotografia · Reportaż · Portret</p>
+    <h1>Światło.<br />Emocje. Kadry.</h1>
+    <p>Fotografuję chwile, które zostają na dłużej — od intymnych portretów po dynamiczne reportaże eventowe.</p>
+  </div>
+</section>
+
+<div id="portfolio">
+  <div class="filters" id="filters">
+    <button class="on" data-f="all">Wszystko</button>
+    <button data-f="portret">Portret</button>
+    <button data-f="reportaż">Reportaż</button>
+    <button data-f="produkt">Produkt</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<section class="offer" id="oferta">
+  <p class="eyebrow" style="color:var(--accent);font-size:12px;letter-spacing:.3em;text-transform:uppercase">Oferta</p>
+  <h2 style="font-size:clamp(26px,4vw,38px);margin:12px 0 0">Pakiety zdjęciowe</h2>
+  <div class="offer-grid">
+    <div class="card"><h3>Sesja portretowa</h3><p>1,5 h w studio lub plenerze, 15 wyretuszowanych ujęć, galeria online.</p><div class="price">od 450 zł</div></div>
+    <div class="card"><h3>Reportaż eventowy</h3><p>Pełne pokrycie wydarzenia, 150+ zdjęć, ekspresowa selekcja w 48 h.</p><div class="price">od 1200 zł</div></div>
+    <div class="card"><h3>Pak produktowy</h3><p>Zdjęcia produktowe do sklepu: packshoty i aranżacje, 20 ujęć.</p><div class="price">od 800 zł</div></div>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox">
+  <button class="close" id="lbClose" aria-label="Zamknij">✕</button>
+  <div>
+    <div class="frame" id="lbFrame"></div>
+    <p class="cap" id="lbCap"></p>
+  </div>
+</div>
+
+<footer id="kontakt">
+  Lens Studio — demonstracyjne portfolio fotograficzne · HTML / CSS / JavaScript<br />
+  ✉️ hej@lensstudio.pl · 📸 @lens.studio
+</footer>
+
+<script>
+  const shots = [
+    { icon: "🌆", cat: "reportaż", c1: "#3a3f58", c2: "#1c1e2e", ar: "c", cap: "Wieczorne miasto — reportaż" },
+    { icon: "👤", cat: "portret", c1: "#4a3b32", c2: "#241d18", ar: "a", cap: "Portret w świetle naturalnym" },
+    { icon: "🍷", cat: "produkt", c1: "#40252e", c2: "#201116", ar: "b", cap: "Fotografia produktowa — glass" },
+    { icon: "🎷", cat: "reportaż", c1: "#33402e", c2: "#182116", ar: "a", cap: "Koncert jazzowy — reportaż" },
+    { icon: "🧑‍🎤", cat: "portret", c1: "#3d2f4a", c2: "#1d1626", ar: "a", cap: "Portret studyjny — artysta" },
+    { icon: "⌚", cat: "produkt", c1: "#2e3a45", c2: "#151c22", ar: "c", cap: "Zegarek — packshot premium" },
+    { icon: "🌊", cat: "reportaż", c1: "#27414d", c2: "#122029", ar: "b", cap: "Wybrzeże — seria dokumentalna" },
+    { icon: "💃", cat: "portret", c1: "#4d3428", c2: "#261811", ar: "c", cap: "Ruch i forma — portret taneczny" },
+    { icon: "🧴", cat: "produkt", c1: "#3a4033", c2: "#1c1f18", ar: "b", cap: "Kosmetyka — aranżacja minimalistyczna" },
+  ];
+
+  const grid = document.getElementById("grid");
+  const lb = document.getElementById("lightbox");
+  const lbFrame = document.getElementById("lbFrame");
+  const lbCap = document.getElementById("lbCap");
+
+  function render(filter) {
+    grid.innerHTML = "";
+    shots
+      .filter(s => filter === "all" || s.cat === filter)
+      .forEach(s => {
+        const el = document.createElement("div");
+        el.className = `shot ${s.ar}`;
+        el.dataset.cat = s.cat;
+        el.style.setProperty("--c1", s.c1.replace(/\s/g, ""));
+        el.style.setProperty("--c2", s.c2.replace(/\s/g, ""));
+        el.textContent = s.icon;
+        el.addEventListener("click", () => openLb(s));
+        grid.appendChild(el);
+      });
+  }
+
+  function openLb(s) {
+    lbFrame.style.setProperty("--c1", s.c1.replace(/\s/g, ""));
+    lbFrame.style.setProperty("--c2", s.c2.replace(/\s/g, ""));
+    lbFrame.textContent = s.icon;
+    lbCap.textContent = s.cap;
+    lb.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeLb() {
+    lb.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  document.getElementById("lbClose").addEventListener("click", closeLb);
+  lb.addEventListener("click", (e) => { if (e.target === lb) closeLb(); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") closeLb(); });
+
+  document.getElementById("filters").addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    document.querySelectorAll("#filters button").forEach(b => b.classList.remove("on"));
+    btn.classList.add("on");
+    render(btn.dataset.f);
+  });
+
+  render("all");
+</script>
+</body>
+</html>
